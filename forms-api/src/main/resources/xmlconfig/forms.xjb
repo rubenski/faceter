@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jaxb:bindings
+        xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        xmlns:inheritance="http://jaxb2-commons.dev.java.net/basic/inheritance"
+        xmlns:annox="http://annox.dev.java.net"
+        jaxb:version="2.1">
+
+    <jaxb:bindings schemaLocation="forms.xsd" node="/xs:schema">
+
+        <jaxb:bindings node="xs:complexType[@name='formDef']">
+            <annox:annotateClass>@javax.xml.bind.annotation.XmlRootElement(name="formDef", namespace="http://www.codebasesoftware.nl/forms")
+            </annox:annotateClass>
+            <jaxb:class name="GeneratedFormDef"/>
+        </jaxb:bindings>
+
+        <jaxb:bindings node="//xs:complexType[@name='fieldSet']/xs:sequence/xs:choice">
+            <jaxb:property name="elements"/>
+        </jaxb:bindings>
+
+        <jaxb:bindings node="//xs:complexType[@name='textInputFormElement']">
+            <jaxb:class name="GeneratedTextInputFormElement"/>
+            <inheritance:extends>nl.codebase.faceter.forms.definition.model.AbstractGeneratedFormElement</inheritance:extends>
+        </jaxb:bindings>
+
+        <jaxb:bindings node="//xs:complexType[@name='selectFormElement']">
+            <jaxb:class name="GeneratedSelectFormElement"/>
+            <inheritance:extends>nl.codebase.faceter.forms.definition.model.AbstractGeneratedFormElement</inheritance:extends>
+        </jaxb:bindings>
+
+        <jaxb:bindings node="//xs:complexType[@name='dateTimePickerFormElement']">
+            <jaxb:class name="GeneratedDateTimePickerFormElement"/>
+            <inheritance:extends>nl.codebase.faceter.forms.definition.model.AbstractGeneratedFormElement</inheritance:extends>
+        </jaxb:bindings>
+
+        <jaxb:bindings node="//xs:complexType[@name='datePart']">
+            <jaxb:class name="GeneratedDatePart"/>
+        </jaxb:bindings>
+
+        <jaxb:bindings node="//xs:complexType[@name='timePart']">
+            <jaxb:class name="GeneratedTimePart"/>
+        </jaxb:bindings>
+
+        <jaxb:bindings node="//xs:complexType[@name='textAreaFormElement']">
+            <jaxb:class name="GeneratedTextAreaFormElement"/>
+            <inheritance:extends>nl.codebase.faceter.forms.definition.model.AbstractGeneratedFormElement</inheritance:extends>
+        </jaxb:bindings>
+
+        <jaxb:bindings node="//xs:complexType[@name='validationGroup']">
+            <jaxb:class name="GeneratedValidationGroup"/>
+        </jaxb:bindings>
+
+        <jaxb:bindings node="//xs:complexType[@name='validationGroup']/xs:choice">
+            <jaxb:property name="validations"/>
+        </jaxb:bindings>
+
+        <jaxb:bindings node="//xs:complexType[@name='selectOption']">
+            <jaxb:class name="GeneratedOption"/>
+        </jaxb:bindings>
+
+        <jaxb:bindings node="//xs:complexType[@name='fieldSet']">
+            <jaxb:class name="GeneratedFieldSet"/>
+        </jaxb:bindings>
+
+        <jaxb:bindings node="//xs:complexType[@name='objectSettings']">
+            <jaxb:class name="GeneratedObjectSettings"/>
+        </jaxb:bindings>
+
+    </jaxb:bindings>
+</jaxb:bindings>

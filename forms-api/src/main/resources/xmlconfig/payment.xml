@@ -1,0 +1,132 @@
+<formDef xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.codebasesoftware.nl/forms forms.xsd"
+         xmlns="http://www.codebasesoftware.nl/forms">
+
+    <formId>payment</formId>
+    <postUrl>http://localhost:8080/ec/payment/{id}</postUrl>
+    <getUrl>http://localhost:8080/ec/payment/{id}</getUrl>
+    <outputChannel>elastic</outputChannel>
+    <fieldSet>
+        <textInputFormElement name="amount" label="Amount" className="ruben" required="true">
+            <maxContentLength>6</maxContentLength>
+            <defaultValue>100</defaultValue>
+            <validationGroup messageKey="#{validation.payment.amount.invalid}">
+                <maxIntValue value="44"/>
+                <minIntValue value="22"/>
+            </validationGroup>
+        </textInputFormElement>
+        <selectFormElement name="payment_method" multiple="false" label="Payment method" required="true">
+            <selectOptions>
+                <selectOption>
+                    <value>AMEX3D</value>
+                    <text>Amex 3D</text>
+                </selectOption>
+                <selectOption>
+                    <value>VISA3D</value>
+                    <text>Visa Secure</text>
+                </selectOption>
+                <selectOption>
+                    <value>MCSC</value>
+                    <text>Mastercard Secure Code</text>
+                </selectOption>
+            </selectOptions>
+        </selectFormElement>
+        <selectFormElement name="country" multiple="true" label="Country" required="true">
+            <selectOptions>
+                <selectOption>
+                    <value>NL</value>
+                    <text>#{countries.nl}</text>
+                </selectOption>
+                <selectOption>
+                    <value>BE</value>
+                    <text>#{countries.be}</text>
+                </selectOption>
+                <selectOption>
+                    <value>FR</value>
+                    <text>#{countries.fr}</text>
+                </selectOption>
+                <selectOption>
+                    <value>DE</value>
+                    <text>#{countries.de}</text>
+                </selectOption>
+            </selectOptions>
+        </selectFormElement>
+    </fieldSet>
+    <fieldSet>
+        <objectSettings>
+            <namePrefix>payment_status</namePrefix>
+            <maxOjects>10</maxOjects>
+        </objectSettings>
+        <dateTimePickerFormElement name="payment_status_date" label="Payment status date" required="false">
+            <datePart>
+                <durationTillDefaultSelectedDate>-P30D</durationTillDefaultSelectedDate>
+                <startYearYearsFromNow>22</startYearYearsFromNow>
+                <endYearYearsFromNow>22</endYearYearsFromNow>
+                <tillMinSelectableDate>-P40D</tillMinSelectableDate>
+                <tillMaxSelectableDate>P10D</tillMaxSelectableDate>
+            </datePart>
+            <timePart>
+                <includeSeconds>false</includeSeconds>
+                <literalDefaultSelectedTime>18:00:00</literalDefaultSelectedTime>
+            </timePart>
+        </dateTimePickerFormElement>
+        <selectFormElement name="payment_status" multiple="false" label="Payment status" required="true">
+            <selectOptions>
+                <selectOption>
+                    <value>CREATED</value>
+                    <text>010</text>
+                </selectOption>
+                <selectOption>
+                    <value>VALID</value>
+                    <text>020</text>
+                </selectOption>
+                <selectOption>
+                    <value>REDIRECTED_TO_BANK</value>
+                    <text>030</text>
+                </selectOption>
+                <selectOption>
+                    <value>REDIRECTED_TO_EPASS</value>
+                    <text>040</text>
+                </selectOption>
+                <selectOption>
+                    <value>APPROVED</value>
+                    <text>050</text>
+                </selectOption>
+            </selectOptions>
+        </selectFormElement>
+    </fieldSet>
+    <fieldSet>
+        <selectFormElement name="client_application" multiple="false" label="Client application" required="true">
+            <selectOptions>
+                <selectOption>
+                    <value>CO</value>
+                    <text>Checkout</text>
+                </selectOption>
+                <selectOption>
+                    <value>ICI</value>
+                    <text>Internet Checkin</text>
+                </selectOption>
+            </selectOptions>
+        </selectFormElement>
+    </fieldSet>
+    <fieldSet>
+        <textAreaFormElement name="remarks" rows="2" cols="30" className="broad" label="Remarks" required="false">
+            <validationGroup messageKey="fewfw">
+                <minLength value="100"/>
+            </validationGroup>
+        </textAreaFormElement>
+    </fieldSet>
+    <fieldSet>
+        <dateTimePickerFormElement name="log_date" label="Log date" required="true">
+            <datePart>
+                <durationTillDefaultSelectedDate>-P30D</durationTillDefaultSelectedDate>
+                <startYearYearsFromNow>-10</startYearYearsFromNow>
+                <endYearYearsFromNow>33</endYearYearsFromNow>
+                <tillMinSelectableDate>-P10D</tillMinSelectableDate>
+                <tillMaxSelectableDate>P10D</tillMaxSelectableDate>
+            </datePart>
+            <timePart/>
+        </dateTimePickerFormElement>
+        <textAreaFormElement name="log_message" rows="2" cols="30" label="Log message" required="false"/>
+    </fieldSet>
+</formDef>

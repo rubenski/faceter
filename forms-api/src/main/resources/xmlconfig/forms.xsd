@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+           xmlns:px="http://www.codebasesoftware.nl/forms"
+           jaxb:version="2.1" attributeFormDefault="unqualified"
+           elementFormDefault="qualified"
+           targetNamespace="http://www.codebasesoftware.nl/forms">
+
+    <xs:element name="formDef" type="px:formDef"/>
+
+    <xs:complexType name="formDef">
+        <xs:sequence>
+            <xs:element type="xs:string" name="formId"/>
+            <xs:element type="xs:string" name="postUrl"/>
+            <xs:element type="xs:string" name="getUrl"/>
+            <xs:element type="xs:string" name="outputChannel"/>
+            <xs:element name="fieldSet" type="px:fieldSet" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="fieldSet">
+        <xs:sequence>
+            <xs:element type="px:objectSettings" name="objectSettings" minOccurs="0" maxOccurs="1"/>
+            <xs:choice minOccurs="1" maxOccurs="unbounded">
+                <xs:element type="px:textInputFormElement" name="textInputFormElement"/>
+                <xs:element type="px:selectFormElement" name="selectFormElement"/>
+                <xs:element type="px:textAreaFormElement" name="textAreaFormElement"/>
+                <xs:element type="px:dateTimePickerFormElement" name="dateTimePickerFormElement"/>
+            </xs:choice>
+        </xs:sequence>
+        <xs:attribute type="xs:string" name="legend" use="optional"/>
+        <xs:attribute type="xs:string" name="section" use="optional"/>
+    </xs:complexType>
+
+    <xs:complexType name="textAreaFormElement">
+        <xs:sequence>
+            <xs:element name="validationGroup" type="px:validationGroup" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element type="xs:string" name="defaultValue" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute type="xs:short" name="rows" use="required"/>
+        <xs:attribute type="xs:short" name="cols" use="required"/>
+        <xs:attributeGroup ref="px:standardAttributes"/>
+    </xs:complexType>
+
+    <xs:complexType name="textInputFormElement">
+        <xs:sequence>
+            <xs:element type="xs:int" name="maxContentLength"/>
+            <xs:element type="xs:string" name="defaultValue"/>
+            <xs:element type="px:validationGroup" name="validationGroup" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attributeGroup ref="px:standardAttributes"/>
+    </xs:complexType>
+
+    <xs:complexType name="selectFormElement">
+        <xs:sequence>
+            <xs:element type="px:selectOptions" name="selectOptions"/>
+        </xs:sequence>
+        <xs:attribute type="xs:boolean" name="multiple" use="optional"/>
+        <xs:attributeGroup ref="px:standardAttributes"/>
+    </xs:complexType>
+
+    <xs:complexType name="dateTimePickerFormElement">
+        <xs:choice minOccurs="1" maxOccurs="unbounded">
+            <xs:element type="px:datePart" name="datePart" minOccurs="1" maxOccurs="1"/>
+            <xs:element type="px:timePart" name="timePart" minOccurs="1" maxOccurs="1"/>
+            <xs:element type="px:validationGroup" name="validationGroup" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:choice>
+        <xs:attributeGroup ref="px:standardAttributes"/>
+    </xs:complexType>
+
+    <xs:complexType name="validationGroup">
+        <xs:choice minOccurs="1" maxOccurs="unbounded">
+            <xs:element type="px:regex" name="regex"/>
+            <xs:element type="px:maxLength" name="maxLength"/>
+            <xs:element type="px:minLength" name="minLength"/>
+            <xs:element type="px:dateBefore" name="dateBefore"/>
+            <xs:element type="px:dateAfter" name="dateAfter"/>
+            <xs:element type="px:timeBefore" name="timeBefore"/>
+            <xs:element type="px:timeAfter" name="timeAfter"/>
+            <xs:element type="px:dateTimeAfter" name="dateTimeAfter"/>
+            <xs:element type="px:dateTimeBefore" name="dateTimeBefore"/>
+            <xs:element type="px:minIntValue" name="minIntValue"/>
+            <xs:element type="px:maxIntValue" name="maxIntValue"/>
+        </xs:choice>
+        <xs:attribute type="xs:string" name="messageKey" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="regex">
+        <xs:attribute name="value" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="maxLength">
+        <xs:attribute name="value" type="xs:int" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="minLength">
+        <xs:attribute name="value" type="xs:int" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="dateBefore">
+        <xs:attribute name="value" type="xs:date" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="dateAfter">
+        <xs:attribute name="value" type="xs:date" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="timeBefore">
+        <xs:attribute name="value" type="xs:time" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="timeAfter">
+        <xs:attribute name="value" type="xs:time" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="dateTimeAfter">
+        <xs:attribute name="value" type="xs:dateTime" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="dateTimeBefore">
+        <xs:attribute name="value" type="xs:dateTime" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="minIntValue">
+        <xs:attribute name="value" type="xs:int" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="maxIntValue">
+        <xs:attribute name="value" type="xs:int" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="selectOptions">
+        <xs:sequence>
+            <xs:element type="px:selectOption" name="selectOption" maxOccurs="unbounded" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="selectOption">
+        <xs:sequence>
+            <xs:element type="xs:string" name="value"/>
+            <xs:element type="xs:string" name="text" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:attributeGroup name="standardAttributes">
+        <xs:attribute type="xs:ID" name="name" use="required"/>
+        <xs:attribute type="xs:string" name="className" use="optional"/>
+        <xs:attribute type="xs:string" name="label" use="required"/>
+        <xs:attribute type="xs:boolean" name="required" use="required"/>
+    </xs:attributeGroup>
+
+    <xs:complexType name="datePart">
+        <xs:sequence>
+            <xs:choice minOccurs="0" maxOccurs="1">
+                <xs:element type="xs:date" name="literalDefaultSelectedDate"/>
+                <xs:element type="xs:duration" name="durationTillDefaultSelectedDate" minOccurs="0" maxOccurs="1"/>
+            </xs:choice>
+            <!-- The start year of the date range, expressed in years from now -->
+            <xs:element type="xs:int" minOccurs="1" maxOccurs="1" name="startYearYearsFromNow"/>
+            <!-- The end year of the date range, expressed in years from now -->
+            <xs:element type="xs:int" minOccurs="1" maxOccurs="1" name="endYearYearsFromNow"/>
+            <xs:element type="xs:duration" name="tillMinSelectableDate"/>
+            <xs:element type="xs:duration" name="tillMaxSelectableDate"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="timePart">
+        <xs:sequence>
+            <xs:element type="px:numericOptions" name="hourOptions" minOccurs="0" maxOccurs="1"/>
+            <xs:element type="px:numericOptions" name="minuteOptions" minOccurs="0" maxOccurs="1"/>
+            <xs:element type="px:numericOptions" name="secondOptions" minOccurs="0" maxOccurs="1"/>
+            <xs:element type="xs:boolean" name="includeSeconds" minOccurs="0" maxOccurs="1"/>
+            <xs:choice minOccurs="0" maxOccurs="1">
+                <xs:element type="xs:time" name="literalDefaultSelectedTime"/>
+                <xs:element type="xs:duration" name="durationTillDefaultSelectedTime"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="numericOptions">
+        <xs:sequence>
+            <xs:element name="numberOption" type="px:numberOption" minOccurs="1" maxOccurs="100"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="numberOption">
+        <xs:attribute name="value" type="xs:int" use="required"/>
+        <xs:attribute name="display_name" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="objectSettings">
+        <xs:sequence>
+            <xs:element type="xs:string" name="namePrefix" minOccurs="1" maxOccurs="1"/>
+            <xs:element type="xs:integer" name="minObjects" minOccurs="0" maxOccurs="1"/>
+            <xs:element type="xs:integer" name="maxOjects" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>
