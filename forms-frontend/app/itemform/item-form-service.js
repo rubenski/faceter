@@ -15,7 +15,7 @@ require("rxjs/add/operator/toPromise");
 let ItemFormService = class ItemFormService {
     constructor(http) {
         this.http = http;
-        this.formsUrl = 'forms/api/config/';
+        this.formsUrl = 'forms/api/definition/';
         this.headers = new http_1.RequestOptions({ headers: new http_1.Headers({ "Content-Type": "application/json" }) });
     }
     getItemForm(itemId) {

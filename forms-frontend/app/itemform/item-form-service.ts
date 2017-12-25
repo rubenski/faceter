@@ -6,7 +6,7 @@ import { ItemForm } from './item-form';
 @Injectable()
 export class ItemFormService {
 
-    private formsUrl = 'forms/api/config/';
+    private formsUrl = 'forms/api/definition/';
     private headers = new RequestOptions({headers: new Headers({"Content-Type" : "application/json"})});
 
     constructor(private http: Http) { }
