@@ -69,5 +69,4 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                             new SimpleGrantedAuthority("ADMIN_USER")));
         }
     }
-
 }
