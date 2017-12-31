@@ -6,6 +6,7 @@ import {HeroDetailComponent} from './hero-detail.component';
 import {ProductComponent} from "./products/product.component";
 import {ItemFormComponent} from "./itemform/itemform.component";
 import {PageNotFoundComponent} from "./not-found.component";
+import {UserAuthGuard} from "./guards/user-auth-guard";
 
 
 const routes: Routes = [
