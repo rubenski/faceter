@@ -12,6 +12,7 @@ import org.springframework.security.oauth2.config.annotation.configurers.ClientD
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
+import org.springframework.security.oauth2.provider.token.AccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
@@ -42,8 +43,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Value("${security.jwt.resource-ids}")
     private String resourceIds;
 
-    @Value("${security.signing-key}")
-    private String signingKey;
+
 
     @Value("${security.access-token-expiry-seconds}")
     private int accessTokenExpiryTimeSeconds;
@@ -51,20 +51,17 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Value("${security.refresh-token-expiry-seconds}")
     private int refreshTokenExpiryTimeSeconds;
 
-
+    private final AuthenticationManager authenticationManager;
+    private final UserDetailsService userDetailsService;
     private final JwtAccessTokenConverter accessTokenConverter;
 
-    private final AuthenticationManager authenticationManager;
-
-    private final UserDetailsService userDetailsService;
-
     @Autowired
-    public AuthorizationServerConfig(JwtAccessTokenConverter accessTokenConverter,
-                                     AuthenticationManager authenticationManager,
-                                     UserDetailsService userDetailsService) {
-        this.accessTokenConverter = accessTokenConverter;
+    public AuthorizationServerConfig(AuthenticationManager authenticationManager,
+                                     UserDetailsService userDetailsService,
+                                     JwtAccessTokenConverter accessTokenConverter) {
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
+        this.accessTokenConverter = accessTokenConverter;
     }
 
     @Override
@@ -93,7 +90,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     @Bean
     public TokenStore tokenStore() {
-        return new JwtTokenStore(accessTokenConverter());
+        return new JwtTokenStore(accessTokenConverter);
     }
 
     @Bean
@@ -105,10 +102,5 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         return defaultTokenServices;
     }
 
-    @Bean
-    public JwtAccessTokenConverter accessTokenConverter() {
-        JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
-        converter.setSigningKey(signingKey);
-        return converter;
-    }
+
 }
