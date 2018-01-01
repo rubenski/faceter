@@ -21,6 +21,22 @@ const dynamic_form_component_1 = require("./dynamic-form/dynamic-form.component"
 const product_component_1 = require("./products/product.component");
 const itemform_component_1 = require("./itemform/itemform.component");
 const not_found_component_1 = require("./not-found.component");
+const angular2_jwt_1 = require("angular2-jwt");
+const auth_constant_1 = require("./auth/auth.constant");
+const login_component_1 = require("./login.component");
+const authentication_service_1 = require("./auth/authentication.service");
+const user_service_1 = require("./auth/user.service");
+function authHttpServiceFactory(http) {
+    return new angular2_jwt_1.AuthHttp(new angular2_jwt_1.AuthConfig({
+        headerPrefix: 'Bearer',
+        tokenName: auth_constant_1.TOKEN_NAME,
+        globalHeaders: [{ 'Content-Type': 'application/json' }],
+        noJwtError: false,
+        noTokenScheme: true,
+        tokenGetter: (() => localStorage.getItem(auth_constant_1.TOKEN_NAME))
+    }), http);
+}
+exports.authHttpServiceFactory = authHttpServiceFactory;
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -41,9 +57,15 @@ AppModule = __decorate([
             dynamic_form_question_component_1.DynamicFormQuestionComponent,
             product_component_1.ProductComponent,
             itemform_component_1.ItemFormComponent,
-            not_found_component_1.PageNotFoundComponent
+            not_found_component_1.PageNotFoundComponent,
+            login_component_1.LoginComponent
         ],
-        providers: [hero_service_1.HeroService],
+        providers: [
+            { provide: angular2_jwt_1.AuthHttp, useFactory: authHttpServiceFactory, deps: [http_1.Http] },
+            hero_service_1.HeroService,
+            authentication_service_1.AuthenticationService,
+            user_service_1.UserService
+        ],
         bootstrap: [app_component_1.AppComponent]
     })
 ], AppModule);

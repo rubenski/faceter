@@ -14,6 +14,7 @@ const hero_detail_component_1 = require("./hero-detail.component");
 const product_component_1 = require("./products/product.component");
 const itemform_component_1 = require("./itemform/itemform.component");
 const not_found_component_1 = require("./not-found.component");
+const login_component_1 = require("./login.component");
 const routes = [
     { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
     { path: 'dashboard', component: dashboard_component_1.DashboardComponent },
@@ -21,6 +22,7 @@ const routes = [
     { path: 'heroes', component: heroes_component_1.HeroesComponent },
     { path: 'products', component: product_component_1.ProductComponent },
     { path: 'item/:type', component: itemform_component_1.ItemFormComponent },
+    { path: 'login', component: login_component_1.LoginComponent },
     { path: '**', component: not_found_component_1.PageNotFoundComponent }
 ];
 let AppRoutingModule = class AppRoutingModule {

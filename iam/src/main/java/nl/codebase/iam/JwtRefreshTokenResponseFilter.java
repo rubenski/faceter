@@ -38,16 +38,17 @@ public class JwtRefreshTokenResponseFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, wrapper);
 
         AccessToken accessToken = getAccessTokenFromResponse(wrapper);
-        int refreshTokenExpirationSeconds = getRefreshTokenExpirationSeconds(accessToken);
 
-        // Remove the refresh token from the access token for security
-        accessToken.setRefreshToken(null);
+        if(accessToken.noError()) {
+            int refreshTokenExpirationSeconds = getRefreshTokenExpirationSeconds(accessToken);
+            // Remove the refresh token from the access token for security
+            accessToken.setRefreshToken(null);
+            // Add the cookie containing the refresh token
+            response.addCookie(createRefreshTokenCookie(accessToken, refreshTokenExpirationSeconds));
+        }
 
         // Write the response bytes captured during filterChain.doFilter() back to the response output stream
         response.getOutputStream().write(mapper.writeValueAsBytes(accessToken));
-
-        // Add the cookie containing the refresh token
-        response.addCookie(createRefreshTokenCookie(accessToken, refreshTokenExpirationSeconds));
     }
 
     /**
@@ -163,6 +164,10 @@ public class JwtRefreshTokenResponseFilter extends OncePerRequestFilter {
         private String error;
         @JsonProperty("error_description")
         private String errorDescription;
+
+        public boolean noError() {
+            return error == null;
+        }
     }
 
 
@@ -173,6 +178,4 @@ public class JwtRefreshTokenResponseFilter extends OncePerRequestFilter {
         @JsonProperty("exp")
         private int expiryEpochSeconds;
     }
-
-
 }

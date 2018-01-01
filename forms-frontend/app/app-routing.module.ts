@@ -6,7 +6,7 @@ import {HeroDetailComponent} from './hero-detail.component';
 import {ProductComponent} from "./products/product.component";
 import {ItemFormComponent} from "./itemform/itemform.component";
 import {PageNotFoundComponent} from "./not-found.component";
-import {UserAuthGuard} from "./guards/user-auth-guard";
+import {LoginComponent} from "./login.component";
 
 
 const routes: Routes = [
@@ -16,6 +16,7 @@ const routes: Routes = [
     {path: 'heroes', component: HeroesComponent},
     {path: 'products', component: ProductComponent},
     {path: 'item/:type', component: ItemFormComponent},
+    {path: 'login', component: LoginComponent},
     {path: '**', component: PageNotFoundComponent }
 ];
 

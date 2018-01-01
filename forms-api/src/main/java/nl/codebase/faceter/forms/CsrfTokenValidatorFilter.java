@@ -31,6 +31,6 @@ public class CsrfTokenValidatorFilter extends OncePerRequestFilter {
             }
         }
 
-        response.sendError(403, "Invalid request");
+        response.sendError(403, "Forbidden");
     }
 }

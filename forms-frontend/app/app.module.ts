@@ -1,7 +1,7 @@
 import { NgModule }      from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import {FormsModule, ReactiveFormsModule}   from '@angular/forms';
-import { HttpModule }    from '@angular/http';
+import {Http, HttpModule} from '@angular/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent }         from './app.component';
 import { DashboardComponent }   from './dashboard.component';
@@ -13,6 +13,22 @@ import {DynamicFormComponent} from "./dynamic-form/dynamic-form.component";
 import {ProductComponent} from "./products/product.component";
 import {ItemFormComponent} from "./itemform/itemform.component";
 import {PageNotFoundComponent} from "./not-found.component";
+import {AuthConfig, AuthHttp} from 'angular2-jwt';
+import {TOKEN_NAME} from "./auth/auth.constant";
+import {LoginComponent} from "./login.component";
+import {AuthenticationService} from "./auth/authentication.service";
+import {UserService} from "./auth/user.service";
+
+export function authHttpServiceFactory(http: Http) {
+    return new AuthHttp(new AuthConfig({
+        headerPrefix: 'Bearer',
+        tokenName: TOKEN_NAME,
+        globalHeaders: [{'Content-Type': 'application/json'}],
+        noJwtError: false,
+        noTokenScheme: true,
+        tokenGetter: (() => localStorage.getItem(TOKEN_NAME))
+    }), http);
+}
 
 @NgModule({
     imports: [
@@ -31,9 +47,15 @@ import {PageNotFoundComponent} from "./not-found.component";
         DynamicFormQuestionComponent,
         ProductComponent,
         ItemFormComponent,
-        PageNotFoundComponent
+        PageNotFoundComponent,
+        LoginComponent
     ],
-    providers: [ HeroService ],
+    providers: [
+        {provide: AuthHttp, useFactory: authHttpServiceFactory, deps: [Http]},
+        HeroService,
+        AuthenticationService,
+        UserService
+    ],
     bootstrap: [ AppComponent ]
 })
 export class AppModule { }
