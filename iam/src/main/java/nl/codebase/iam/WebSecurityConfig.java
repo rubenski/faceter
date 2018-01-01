@@ -33,8 +33,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${security.signing-key}")
     private String signingKey;
 
+    private final UserDetailsService userDetailsService;
+
     @Autowired
-    private UserDetailsService userDetailsService;
+    public WebSecurityConfig(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {

@@ -52,14 +52,20 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     private int refreshTokenExpiryTimeSeconds;
 
 
-    @Autowired
-    private JwtAccessTokenConverter accessTokenConverter;
+    private final JwtAccessTokenConverter accessTokenConverter;
+
+    private final AuthenticationManager authenticationManager;
+
+    private final UserDetailsService userDetailsService;
 
     @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private UserDetailsService userDetailsService;
+    public AuthorizationServerConfig(JwtAccessTokenConverter accessTokenConverter,
+                                     AuthenticationManager authenticationManager,
+                                     UserDetailsService userDetailsService) {
+        this.accessTokenConverter = accessTokenConverter;
+        this.authenticationManager = authenticationManager;
+        this.userDetailsService = userDetailsService;
+    }
 
     @Override
     public void configure(ClientDetailsServiceConfigurer configurer) throws Exception {
