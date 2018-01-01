@@ -1,4 +1,4 @@
-package nl.codebase.iam;
+package nl.codebase.iam.filter;
 
 import nl.codebase.faceter.common.FaceterConstants;
 import org.springframework.stereotype.Component;
