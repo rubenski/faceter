@@ -31,7 +31,7 @@ public class IAMConfig {
 
         @Override
         public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-            return  new User("user", "pwd", true, true,
+            return new User("user", "pwd", true, true,
                     true, true,
                     Arrays.asList(new SimpleGrantedAuthority("STANDARD_USER"),
                             new SimpleGrantedAuthority("ADMIN_USER")));

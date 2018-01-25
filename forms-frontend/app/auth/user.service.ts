@@ -13,6 +13,7 @@ export class UserService {
     }
 
     login(accessToken: string) {
+        console.log("access token received");
         const decodedToken = this.jwtHelper.decodeToken(accessToken);
         console.log(decodedToken);
 

@@ -1,4 +1,4 @@
-package nl.codebase.faceter.forms;
+package nl.codebase.faceter.forms.filter;
 
 import org.springframework.web.filter.OncePerRequestFilter;
 

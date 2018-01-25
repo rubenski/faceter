@@ -12,7 +12,7 @@ import org.springframework.security.oauth2.config.annotation.configurers.ClientD
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
-import org.springframework.security.oauth2.provider.token.AccessTokenConverter;
+import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
@@ -42,8 +42,6 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     @Value("${security.jwt.resource-ids}")
     private String resourceIds;
-
-
 
     @Value("${security.access-token-expiry-seconds}")
     private int accessTokenExpiryTimeSeconds;
@@ -77,6 +75,16 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 .resourceIds(resourceIds);
     }
 
+
+
+    @Override
+    public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
+        //AuthorizationServerSecurityConfigurer securityConfigurer = new AuthorizationServerSecurityConfigurer();
+        //securityConfigurer.addTokenEndpointAuthenticationFilter();
+        // security.setBuilder(new HttpSecurity.RequestMatcherConfigurer().);
+        super.configure(security);
+    }
+
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         TokenEnhancerChain enhancerChain = new TokenEnhancerChain();
@@ -101,6 +109,5 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         defaultTokenServices.setSupportRefreshToken(true);
         return defaultTokenServices;
     }
-
 
 }

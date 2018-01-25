@@ -24,27 +24,28 @@ import java.util.List;
 
 /**
  * Removes the refresh_token from the JSON response and instead returns it in a response cookie.
+ * Removes the access_token from the JSON response and returns it in a response cookie.
+ *
  */
 @Slf4j
 @Component
-public class JwtRefreshTokenResponseFilter extends OncePerRequestFilter {
+public class JwtTokensResponseFilter extends OncePerRequestFilter {
 
     private ObjectMapper mapper = new ObjectMapper();
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        // Provide a response wrapper, so the original response doesn't get committed, which makes it impossible to add headers
+        // Provide a response wrapper, so the original response doesn't get committed,
+        // which makes it impossible to add headers
+
         DummyResponse wrapper = new DummyResponse(response);
         filterChain.doFilter(request, wrapper);
 
-        AccessToken accessToken = getAccessTokenFromResponse(wrapper);
+        AccessToken accessToken = getAccessTokenFromOriginalResponse(wrapper);
 
         if(accessToken.noError()) {
-            int refreshTokenExpirationSeconds = getRefreshTokenExpirationSeconds(accessToken);
-            // Remove the refresh token from the access token for security
-            accessToken.setRefreshToken(null);
-            // Add the cookie containing the refresh token
-            response.addCookie(createRefreshTokenCookie(accessToken, refreshTokenExpirationSeconds));
+            response.addCookie(createCookieFromResfreshTokenInResponse(accessToken));
+            response.addCookie(createCookieFromAccessTokenInResponse(accessToken));
         }
 
         // Write the response bytes captured during filterChain.doFilter() back to the response output stream
@@ -58,8 +59,31 @@ public class JwtRefreshTokenResponseFilter extends OncePerRequestFilter {
      * @return
      * @throws IOException
      */
-    private AccessToken getAccessTokenFromResponse(DummyResponse wrapper) throws IOException {
+    private AccessToken getAccessTokenFromOriginalResponse(DummyResponse wrapper) throws IOException {
         return mapper.readValue(wrapper.getContent(), AccessToken.class);
+    }
+
+    /**
+     * Create a refresh token cookie with expiry time. The expiry time in the token is an epoch value. We must
+     * convert this to seconds, because that is what the cookie expects.
+     *
+     * @param accessToken the acccess token
+     * @return the cookie
+     */
+    private Cookie createCookieFromResfreshTokenInResponse(AccessToken accessToken) throws IOException {
+        Cookie refreshTokenCookie = new Cookie("refresh_token", accessToken.getRefreshToken());
+        refreshTokenCookie.setPath("/login");
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setMaxAge(getRefreshTokenExpirationSeconds(accessToken));
+        return refreshTokenCookie;
+    }
+
+    private Cookie createCookieFromAccessTokenInResponse(AccessToken accessToken) throws IOException {
+        Cookie accessTokenCookie = new Cookie("access_token", accessToken.getAccessToken());
+        accessTokenCookie.setPath("/");
+        accessTokenCookie.setHttpOnly(true);
+        accessTokenCookie.setMaxAge(getRefreshTokenExpirationSeconds(accessToken));
+        return accessTokenCookie;
     }
 
     /**
@@ -70,37 +94,22 @@ public class JwtRefreshTokenResponseFilter extends OncePerRequestFilter {
      * @throws IOException
      */
     private int getRefreshTokenExpirationSeconds(AccessToken accessToken) throws IOException {
+        long currentEpochSeconds = System.currentTimeMillis() / 1000;
         String[] refreshTokenParts = accessToken.getRefreshToken().split("\\.");
         String refreshTokenPayloadRaw = new String(Base64.getDecoder().decode(refreshTokenParts[1]));
         RefreshTokenPayload refreshTokenPayload = mapper.readValue(refreshTokenPayloadRaw, RefreshTokenPayload.class);
         int expiryEpochSeconds = refreshTokenPayload.getExpiryEpochSeconds();
         // The expiration time is in epoch seconds format, so we must subtract the current epoch seconds to get
         // the number of seconds UNTIL expiration, which is needed by the Cookie interface.
-        long currentEpochSeconds = System.currentTimeMillis() / 1000;
-        return (int) (expiryEpochSeconds - currentEpochSeconds);
-    }
-
-    /**
-     * Create a refresh token cookie with expiry time. The expiry time in the token is an epoch value. We must
-     * convert this to seconds, because that is what the cookie expects.
-     *
-     * @param accessToken            the acccess token
-     * @param refreshTokenExpiryTime the expiry time
-     * @return the cookie
-     */
-    private Cookie createRefreshTokenCookie(AccessToken accessToken, int refreshTokenExpiryTime) {
-        Cookie c = new Cookie("refresh_token", accessToken.getRefreshToken());
-        c.setPath("/oauth/token");
-        c.setHttpOnly(true);
-        c.setMaxAge(refreshTokenExpiryTime);
-        return c;
+        int i = (int) (expiryEpochSeconds - currentEpochSeconds);
+        return i;
     }
 
     private static class DummyResponse extends HttpServletResponseWrapper {
 
         private List<Integer> responseBytes = new ArrayList<>();
 
-        public DummyResponse(HttpServletResponse response) {
+        DummyResponse(HttpServletResponse response) {
             super(response);
         }
 
@@ -125,7 +134,7 @@ public class JwtRefreshTokenResponseFilter extends OncePerRequestFilter {
             };
         }
 
-        public String getContent() {
+        String getContent() {
             byte[] bytes = new byte[responseBytes.size()];
             final int[] count = new int[]{0};
             responseBytes.forEach(b -> {
@@ -165,7 +174,7 @@ public class JwtRefreshTokenResponseFilter extends OncePerRequestFilter {
         @JsonProperty("error_description")
         private String errorDescription;
 
-        public boolean noError() {
+        boolean noError() {
             return error == null;
         }
     }

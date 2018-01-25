@@ -26,6 +26,7 @@ const auth_constant_1 = require("./auth/auth.constant");
 const login_component_1 = require("./login.component");
 const authentication_service_1 = require("./auth/authentication.service");
 const user_service_1 = require("./auth/user.service");
+const ngx_cookie_service_1 = require("ngx-cookie-service");
 function authHttpServiceFactory(http) {
     return new angular2_jwt_1.AuthHttp(new angular2_jwt_1.AuthConfig({
         headerPrefix: 'Bearer',
@@ -64,7 +65,8 @@ AppModule = __decorate([
             { provide: angular2_jwt_1.AuthHttp, useFactory: authHttpServiceFactory, deps: [http_1.Http] },
             hero_service_1.HeroService,
             authentication_service_1.AuthenticationService,
-            user_service_1.UserService
+            user_service_1.UserService,
+            ngx_cookie_service_1.CookieService
         ],
         bootstrap: [app_component_1.AppComponent]
     })

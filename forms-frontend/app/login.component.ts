@@ -35,8 +35,10 @@ export class LoginComponent implements OnInit {
                 result => {
                     this.loading = false;
 
+                    console.log(result.token);
+
                     if (result) {
-                        this.userService.login(result);
+                        this.userService.login(result.token);
                         this.navigateAfterSuccess();
                     } else {
                         this.error = 'Username or password is incorrect';

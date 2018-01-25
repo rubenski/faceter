@@ -18,6 +18,7 @@ import {TOKEN_NAME} from "./auth/auth.constant";
 import {LoginComponent} from "./login.component";
 import {AuthenticationService} from "./auth/authentication.service";
 import {UserService} from "./auth/user.service";
+import { CookieService } from 'ngx-cookie-service';
 
 export function authHttpServiceFactory(http: Http) {
     return new AuthHttp(new AuthConfig({
@@ -54,7 +55,8 @@ export function authHttpServiceFactory(http: Http) {
         {provide: AuthHttp, useFactory: authHttpServiceFactory, deps: [Http]},
         HeroService,
         AuthenticationService,
-        UserService
+        UserService,
+        CookieService
     ],
     bootstrap: [ AppComponent ]
 })

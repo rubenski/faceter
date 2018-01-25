@@ -1,6 +1,7 @@
 package nl.codebase.faceter.forms;
 
 import lombok.extern.slf4j.Slf4j;
+import nl.codebase.faceter.forms.filter.CsrfTokenValidatorFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -14,7 +15,6 @@ import org.springframework.security.oauth2.provider.token.ResourceServerTokenSer
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.Filter;
 
@@ -32,7 +32,6 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     @Value("${security.signing-key}")
     private String signingKey;
 
-
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
         resources.resourceId(resourceIds).tokenServices(tokenServices);
@@ -45,7 +44,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/actuator/**", "/api-docs/**").permitAll()
-                .antMatchers("/springjwt/**" ).authenticated();
+                .antMatchers("/springjwt/**").authenticated();
     }
 
     @Bean
