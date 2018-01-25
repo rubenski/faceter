@@ -1,7 +1,5 @@
-package nl.codebase.iam.filter;
+package nl.codebase.faceter.common;
 
-import nl.codebase.faceter.common.FaceterConstants;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
 import javax.servlet.http.Cookie;
@@ -12,7 +10,6 @@ import java.util.UUID;
 /**
  * Adds a CSRF token cookie header to the response
  */
-@Component
 public class CsrfTokenResponseFilter implements Filter {
 
     @Override
@@ -27,7 +24,7 @@ public class CsrfTokenResponseFilter implements Filter {
         c.setHttpOnly(true);
         c.setPath("/");
         res.addCookie(c);
-        chain.doFilter(request, response);
+        chain.doFilter(request, res);
     }
 
     @Override

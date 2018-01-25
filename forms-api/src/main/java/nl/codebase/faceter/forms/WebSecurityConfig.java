@@ -1,6 +1,6 @@
 package nl.codebase.faceter.forms;
 
-import nl.codebase.faceter.forms.filter.CustomFilter;
+import nl.codebase.faceter.common.CsrfTokenResponseFilter;
 import nl.codebase.faceter.forms.filter.TokenMoverFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,10 +16,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationProcessingFilter;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -77,12 +77,28 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return converter;
     }
 
+    /**
+     * Moves the JWT token from the incoming cookie to the request header
+     * @return
+     */
     @Bean
-    public FilterRegistrationBean contextFilterRegistrationBean() {
+    public FilterRegistrationBean tokenMoverFilter() {
         FilterRegistrationBean registrationBean = new FilterRegistrationBean();
         TokenMoverFilter tokenMoverFilter = new TokenMoverFilter();
         registrationBean.setFilter(tokenMoverFilter);
-        registrationBean.setOrder(-10000);
+        registrationBean.setOrder(-10);
+        return registrationBean;
+    }
+
+    /**
+     * Returns a csrf token in every response
+     * @return
+     */
+    @Bean
+    public FilterRegistrationBean csrfFilter() {
+        FilterRegistrationBean registrationBean = new FilterRegistrationBean();;
+        registrationBean.setFilter(new CsrfTokenResponseFilter());
+        //registrationBean.setOrder(1);
         return registrationBean;
     }
 }

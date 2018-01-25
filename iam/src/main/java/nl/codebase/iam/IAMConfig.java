@@ -1,6 +1,8 @@
 package nl.codebase.iam;
 
+import nl.codebase.faceter.common.CsrfTokenResponseFilter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -43,5 +45,17 @@ public class IAMConfig {
         JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
         converter.setSigningKey(signingKey);
         return converter;
+    }
+
+    /**
+     * Returns a csrf token in every response
+     * @return
+     */
+    @Bean
+    public FilterRegistrationBean csrfFilter() {
+        FilterRegistrationBean registrationBean = new FilterRegistrationBean();;
+        registrationBean.setFilter(new CsrfTokenResponseFilter());
+        registrationBean.setOrder(1);
+        return registrationBean;
     }
 }
