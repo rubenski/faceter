@@ -19,8 +19,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
-import java.util.Arrays;
-
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -61,7 +59,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .disable();
 
         http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
-        //http.addFilterBefore(new CustomFilter(), BasicAuthenticationFilter.class);
     }
 
 
@@ -86,7 +83,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         FilterRegistrationBean registrationBean = new FilterRegistrationBean();
         TokenMoverFilter tokenMoverFilter = new TokenMoverFilter();
         registrationBean.setFilter(tokenMoverFilter);
-        registrationBean.setOrder(-10);
+        // DO NOT TOUCH THE ORDER OF THIS FILTER. IT WILL SCREW THINGS UP ROYALLY FOR YOU. TOKEN MUST BE MOVED TO
+        // HEADER BEFORE THE SPRING SECURITY CHAIN STARTS.
+        registrationBean.setOrder(-100);
         return registrationBean;
     }
 

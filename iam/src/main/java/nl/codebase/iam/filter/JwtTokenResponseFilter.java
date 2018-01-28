@@ -29,7 +29,7 @@ import java.util.List;
  */
 @Slf4j
 @Component
-public class JwtTokensResponseFilter extends OncePerRequestFilter {
+public class JwtTokenResponseFilter extends OncePerRequestFilter {
 
     private ObjectMapper mapper = new ObjectMapper();
 
@@ -47,6 +47,9 @@ public class JwtTokensResponseFilter extends OncePerRequestFilter {
             response.addCookie(createCookieFromResfreshTokenInResponse(accessToken));
             response.addCookie(createCookieFromAccessTokenInResponse(accessToken));
         }
+
+        accessToken.setAccessToken(null);
+        accessToken.setRefreshToken(null);
 
         // Write the response bytes captured during filterChain.doFilter() back to the response output stream
         response.getOutputStream().write(mapper.writeValueAsBytes(accessToken));

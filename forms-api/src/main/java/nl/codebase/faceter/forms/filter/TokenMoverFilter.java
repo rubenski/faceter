@@ -2,8 +2,6 @@ package nl.codebase.faceter.forms.filter;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.connector.Request;
-import org.apache.catalina.connector.RequestFacade;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.*;
@@ -27,9 +25,9 @@ public class TokenMoverFilter extends OncePerRequestFilter {
         if(optionalAccessToken.isPresent()) {
             Cookie cookie = optionalAccessToken.get();
             filterChain.doFilter(new MyRequestWrapper(request, cookie.getValue()), response);
+        } else {
+            filterChain.doFilter(request, response);
         }
-
-        filterChain.doFilter(request, response);
     }
 
     private static class MyRequestWrapper extends HttpServletRequestWrapper {

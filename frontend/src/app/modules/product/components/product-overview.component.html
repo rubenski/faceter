@@ -1,0 +1,9 @@
+<h2 highlight="gold">Products</h2>
+<ul class="items">
+  <li *ngFor="let product of products$ | async"
+      [class.selected]="product.id === selectedId">
+    <a [routerLink]="['/product', product.id]">
+      <span class="badge">{{ product.id }}</span>{{ product.name }}
+    </a>
+  </li>
+</ul>

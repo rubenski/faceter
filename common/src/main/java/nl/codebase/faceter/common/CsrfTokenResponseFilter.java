@@ -21,7 +21,7 @@ public class CsrfTokenResponseFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletResponse res = (HttpServletResponse) response;
         Cookie c = new Cookie(FaceterConstants.CSRF_COOKIE_NAME, UUID.randomUUID().toString());
-        c.setHttpOnly(true);
+        c.setHttpOnly(false); // we need to be able to read it with the Angular client
         c.setPath("/");
         res.addCookie(c);
         chain.doFilter(request, res);
