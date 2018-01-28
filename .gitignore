@@ -32,4 +32,6 @@ package-lock.json
 ## angular ##
 *.map
 
+*.js
+
 
