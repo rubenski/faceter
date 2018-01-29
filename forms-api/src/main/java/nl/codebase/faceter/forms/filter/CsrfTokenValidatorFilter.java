@@ -41,6 +41,7 @@ public class CsrfTokenValidatorFilter extends OncePerRequestFilter {
             }
         }
 
+        filterChain.doFilter(request, response);
 
     }
 }
