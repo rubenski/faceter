@@ -22,22 +22,26 @@ public class CsrfTokenValidatorFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        boolean csrfOk = false;
-        Cookie[] cookies = request.getCookies();
-        if(cookies != null) {
-            Optional<Cookie> cookieOptional = Arrays.stream(cookies).filter(c -> c.getName().equals(CSRF_COOKIE_NAME)).findFirst();
-            if(cookieOptional.isPresent()) {
-                String header = request.getHeader(CSRF_HEADER_NAME);
-                if(header != null && header.equals(cookieOptional.get().getValue())) {
-                    log.debug("CSRF TOKEN OK");
-                    csrfOk = true;
-                    filterChain.doFilter(request, response);
+        if(!request.getMethod().equals("GET")) {
+            boolean csrfOk = false;
+            Cookie[] cookies = request.getCookies();
+            if(cookies != null) {
+                Optional<Cookie> cookieOptional = Arrays.stream(cookies).filter(c -> c.getName().equals(CSRF_COOKIE_NAME)).findFirst();
+                if(cookieOptional.isPresent()) {
+                    String header = request.getHeader(CSRF_HEADER_NAME);
+                    if(header != null && header.equals(cookieOptional.get().getValue())) {
+                        log.debug("CSRF TOKEN OK");
+                        csrfOk = true;
+                        filterChain.doFilter(request, response);
+                    }
                 }
+            }
+
+            if(!csrfOk) {
+                response.sendError(403, "Forbidden");
             }
         }
 
-        if(!csrfOk) {
-            response.sendError(403, "Forbidden");
-        }
+
     }
 }
