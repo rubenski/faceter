@@ -21,6 +21,9 @@ public class TokenMoverFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         Cookie[] cookies = request.getCookies();
+        if(cookies == null) {
+            filterChain.doFilter(request, response);
+        }
         Optional<Cookie> optionalAccessToken = Arrays.stream(cookies).filter(c -> c.getName().equals("access_token")).findFirst();
         if(optionalAccessToken.isPresent()) {
             Cookie cookie = optionalAccessToken.get();
