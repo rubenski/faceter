@@ -83,8 +83,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         FilterRegistrationBean registrationBean = new FilterRegistrationBean();
         TokenMoverFilter tokenMoverFilter = new TokenMoverFilter();
         registrationBean.setFilter(tokenMoverFilter);
-        // DO NOT TOUCH THE ORDER OF THIS FILTER. IT WILL SCREW THINGS UP ROYALLY FOR YOU. TOKEN MUST BE MOVED TO
-        // HEADER BEFORE THE SPRING SECURITY CHAIN STARTS.
+        // DO NOT TOUCH THE ORDER OF THIS FILTER. TOKEN MUST BE MOVED TO HEADER BEFORE THE SPRING SECURITY CHAIN STARTS.
         registrationBean.setOrder(-100);
         return registrationBean;
     }
@@ -97,7 +96,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public FilterRegistrationBean csrfFilter() {
         FilterRegistrationBean registrationBean = new FilterRegistrationBean();;
         registrationBean.setFilter(new CsrfTokenResponseFilter());
-        //registrationBean.setOrder(1);
         return registrationBean;
     }
 }
