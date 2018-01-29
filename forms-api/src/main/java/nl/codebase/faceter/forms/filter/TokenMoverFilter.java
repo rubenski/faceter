@@ -23,13 +23,14 @@ public class TokenMoverFilter extends OncePerRequestFilter {
         Cookie[] cookies = request.getCookies();
         if(cookies == null) {
             filterChain.doFilter(request, response);
-        }
-        Optional<Cookie> optionalAccessToken = Arrays.stream(cookies).filter(c -> c.getName().equals("access_token")).findFirst();
-        if(optionalAccessToken.isPresent()) {
-            Cookie cookie = optionalAccessToken.get();
-            filterChain.doFilter(new MyRequestWrapper(request, cookie.getValue()), response);
         } else {
-            filterChain.doFilter(request, response);
+            Optional<Cookie> optionalAccessToken = Arrays.stream(cookies).filter(c -> c.getName().equals("access_token")).findFirst();
+            if(optionalAccessToken.isPresent()) {
+                Cookie cookie = optionalAccessToken.get();
+                filterChain.doFilter(new MyRequestWrapper(request, cookie.getValue()), response);
+            } else {
+                filterChain.doFilter(request, response);
+            }
         }
     }
 
