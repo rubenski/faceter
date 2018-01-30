@@ -1,7 +1,11 @@
 this is a form component
 
 
-<div *ngIf="form$ | async as dynamicForm; else loading">
+<!--<div *ngIf="form$ | async as dynamicForm; else loading">
+  {{dynamicForm.formId}}
+</div>-->
+
+<div *ngIf="form$ as dynamicForm; else loading">
   {{dynamicForm.formId}}
 </div>
 

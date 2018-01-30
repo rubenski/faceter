@@ -13,6 +13,7 @@ import {LoginModule} from './modules/login/login.module';
 import {CsrfInterceptor} from './csrf.interceptor';
 import {CookieService} from 'ngx-cookie-service';
 import {DynamicFormModule} from './modules/dynamicform/dynamic.form.module';
+import {ExpiredTokenInterceptor} from "./expired.token.interceptor";
 
 @NgModule({
   declarations: [
@@ -35,6 +36,10 @@ import {DynamicFormModule} from './modules/dynamicform/dynamic.form.module';
     {
       provide: HTTP_INTERCEPTORS,
       useClass: CsrfInterceptor,
+      multi: true
+    }, {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ExpiredTokenInterceptor,
       multi: true
     },
     CookieService
