@@ -75,9 +75,9 @@ public class JwtTokenResponseFilter extends OncePerRequestFilter {
      */
     private Cookie createCookieFromResfreshTokenInResponse(AccessToken accessToken) throws IOException {
         Cookie refreshTokenCookie = new Cookie("refresh_token", accessToken.getRefreshToken());
-        refreshTokenCookie.setPath("/login");
+        refreshTokenCookie.setPath("/");
         refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setMaxAge(getRefreshTokenExpirationSeconds(accessToken));
+        refreshTokenCookie.setMaxAge(getExpirationSecondsFromToken(accessToken.getRefreshToken()));
         return refreshTokenCookie;
     }
 
@@ -85,26 +85,20 @@ public class JwtTokenResponseFilter extends OncePerRequestFilter {
         Cookie accessTokenCookie = new Cookie("access_token", accessToken.getAccessToken());
         accessTokenCookie.setPath("/");
         accessTokenCookie.setHttpOnly(true);
-        accessTokenCookie.setMaxAge(getRefreshTokenExpirationSeconds(accessToken));
+        accessTokenCookie.setMaxAge(getExpirationSecondsFromToken(accessToken.getAccessToken()));
         return accessTokenCookie;
     }
 
-    /**
-     * Get the refresh token embedded in the access token and take the expiry time in seconds from its payload.
-     *
-     * @param accessToken
-     * @return int the expiry time in seconds
-     * @throws IOException
-     */
-    private int getRefreshTokenExpirationSeconds(AccessToken accessToken) throws IOException {
-        long currentEpochSeconds = System.currentTimeMillis() / 1000;
-        String[] refreshTokenParts = accessToken.getRefreshToken().split("\\.");
+    private int getExpirationSecondsFromToken(String accessToken) throws IOException {
+        double currentEpochSeconds = Math.ceil(System.currentTimeMillis() / 1000);
+        String[] refreshTokenParts = accessToken.split("\\.");
         String refreshTokenPayloadRaw = new String(Base64.getDecoder().decode(refreshTokenParts[1]));
         RefreshTokenPayload refreshTokenPayload = mapper.readValue(refreshTokenPayloadRaw, RefreshTokenPayload.class);
         int expiryEpochSeconds = refreshTokenPayload.getExpiryEpochSeconds();
         // The expiration time is in epoch seconds format, so we must subtract the current epoch seconds to get
         // the number of seconds UNTIL expiration, which is needed by the Cookie interface.
         int i = (int) (expiryEpochSeconds - currentEpochSeconds);
+        log.info("Token number of seconds valid = {}", i);
         return i;
     }
 
