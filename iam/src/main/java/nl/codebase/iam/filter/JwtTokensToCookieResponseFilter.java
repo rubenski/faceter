@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -23,13 +22,12 @@ import java.util.Base64;
 import java.util.List;
 
 /**
- * Removes the refresh_token from the JSON response and instead returns it in a response cookie.
- * Removes the access_token from the JSON response and returns it in a response cookie.
+ * Removes the refresh_token and the access_token from the JSON response and returns them each as a separate http-only
+ * cookie.
  *
  */
 @Slf4j
-@Component
-public class JwtTokenResponseFilter extends OncePerRequestFilter {
+public class JwtTokensToCookieResponseFilter extends OncePerRequestFilter {
 
     private ObjectMapper mapper = new ObjectMapper();
 
@@ -175,7 +173,6 @@ public class JwtTokenResponseFilter extends OncePerRequestFilter {
             return error == null;
         }
     }
-
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @Getter

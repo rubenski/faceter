@@ -3,11 +3,12 @@ import {JwtHelper} from 'angular2-jwt';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 
 import {TOKEN_AUTH_PASSWORD, TOKEN_AUTH_USERNAME, TOKEN_NAME} from '../../app.constants';
+import {Observable} from "rxjs/Observable";
 
 @Injectable()
 export class LoginService {
 
-  static AUTH_TOKEN = '/login/oauth/token';
+  static AUTH_TOKEN = '/iam/oauth/token';
 
   jwtHelper: JwtHelper = new JwtHelper();
   accessToken: string;
@@ -33,23 +34,19 @@ export class LoginService {
       error => {
         console.log('error');
       });
-    const bla = '';
-    /*.map(res => {
+  }
 
-      const contentLengthHeader = res.headers.get('Content-Length');
-      const setCookieHeader = res.headers.get('set-cookie');
+  refreshAccessToken() : Observable<{}> {
+    const body = `grant_type=refresh_token`;
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Basic ' + btoa(TOKEN_AUTH_USERNAME + ':' + TOKEN_AUTH_PASSWORD),
+        'withCredentials': 'true'
+      })
+    };
 
-      if (res.json().access_token) {
-
-        // this.cookieService.set('test', 'Hello World');
-
-        return {
-          token: res.json().access_token,
-          csrf: res.headers
-        };
-      }
-      return null;
-    });*/
+    return this.http.post(LoginService.AUTH_TOKEN, body, httpOptions);
   }
 
   processToken(accessToken: string) {

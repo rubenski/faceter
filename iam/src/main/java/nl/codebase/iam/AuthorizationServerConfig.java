@@ -18,6 +18,7 @@ import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
+
 import java.util.Arrays;
 
 @Configuration
@@ -76,12 +77,9 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     }
 
 
-
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
-        //AuthorizationServerSecurityConfigurer securityConfigurer = new AuthorizationServerSecurityConfigurer();
-        //securityConfigurer.addTokenEndpointAuthenticationFilter();
-        // security.setBuilder(new HttpSecurity.RequestMatcherConfigurer().);
+        security.allowFormAuthenticationForClients();
         super.configure(security);
     }
 
@@ -109,5 +107,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         defaultTokenServices.setSupportRefreshToken(true);
         return defaultTokenServices;
     }
+
+
 
 }

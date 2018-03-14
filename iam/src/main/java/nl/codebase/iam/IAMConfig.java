@@ -1,8 +1,6 @@
 package nl.codebase.iam;
 
-import nl.codebase.faceter.common.CsrfTokenResponseFilter;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -33,7 +31,7 @@ public class IAMConfig {
 
         @Override
         public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-            return new User("user", "pwd", true, true,
+            return new User("usr", "pwd", true, true,
                     true, true,
                     Arrays.asList(new SimpleGrantedAuthority("STANDARD_USER"),
                             new SimpleGrantedAuthority("ADMIN_USER")));
@@ -51,11 +49,20 @@ public class IAMConfig {
      * Returns a csrf token in every response
      * @return
      */
-    @Bean
+   /* @Bean
     public FilterRegistrationBean csrfFilter() {
         FilterRegistrationBean registrationBean = new FilterRegistrationBean();;
         registrationBean.setFilter(new CsrfTokenResponseFilter());
         registrationBean.setOrder(1);
         return registrationBean;
-    }
+    }*/
+
+    /*@Bean
+    public FilterRegistrationBean refreshTokenToBodyFilter() {
+        FilterRegistrationBean registrationBean = new FilterRegistrationBean();;
+        registrationBean.setFilter(new JwtRefreshTokenToBodyRequestFilter());
+        registrationBean.setOrder(-1000000000);
+        return registrationBean;
+    }*/
+
 }
