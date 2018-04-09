@@ -13,7 +13,8 @@ import {LoginModule} from './modules/login/login.module';
 import {CsrfInterceptor} from './csrf.interceptor';
 import {CookieService} from 'ngx-cookie-service';
 import {DynamicFormModule} from './modules/dynamicform/dynamic.form.module';
-import {ExpiredTokenInterceptor} from "./expired.token.interceptor";
+import {ErrorInterceptor} from "./expired.token.interceptor";
+import {ServiceCallWrapper} from "./service.call.wrapper";
 
 @NgModule({
   declarations: [
@@ -39,10 +40,11 @@ import {ExpiredTokenInterceptor} from "./expired.token.interceptor";
       multi: true
     }, {
       provide: HTTP_INTERCEPTORS,
-      useClass: ExpiredTokenInterceptor,
+      useClass: ErrorInterceptor,
       multi: true
     },
-    CookieService
+    CookieService,
+    ServiceCallWrapper
   ],
   bootstrap: [AppComponent]
 })

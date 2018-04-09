@@ -18,6 +18,9 @@ export class LoginService {
   }
 
   login(username: string, password: string) {
+
+    console.log("log in!");
+
     const body = `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&grant_type=password`;
 
     const httpOptions = {
@@ -37,6 +40,9 @@ export class LoginService {
   }
 
   refreshAccessToken() : Observable<{}> {
+
+    console.log("refreshing!");
+
     const body = `grant_type=refresh_token`;
     const httpOptions = {
       headers: new HttpHeaders({

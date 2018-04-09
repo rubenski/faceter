@@ -1,5 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {ServiceCallWrapper} from "../../service.call.wrapper";
+import {Observable} from "rxjs/Observable";
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -8,10 +10,12 @@ const httpOptions = {
 @Injectable()
 export class DynamicFormService {
 
-  constructor(private http: HttpClient) {
+
+  constructor(private http: HttpClient, private serviceCallWrapper: ServiceCallWrapper) {
+
   }
 
-  findForMe() {
+  findForMe() : Observable<{}> {
     return this.http.get('/forms/api/definition/payment', httpOptions);
   }
 

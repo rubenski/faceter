@@ -50,10 +50,12 @@ public class AccessTokenToCookiePostFilter extends ZuulFilter {
         try {
             String body = StreamUtils.copyToString(stream, Charset.forName("UTF-8"));
             AccessToken accessToken = mapper.readValue(body, AccessToken.class);
-            context.getResponse().addCookie(createCookieFromAccessTokenInResponse(accessToken));
-            context.getResponse().addCookie(createCookieFromRefreshTokenInResponse(accessToken));
-            accessToken.clearSensitiveFields();
-            context.setResponseBody(null);
+            if (accessToken.isPresent()) {
+                context.getResponse().addCookie(createCookieFromAccessTokenInResponse(accessToken));
+                context.getResponse().addCookie(createCookieFromRefreshTokenInResponse(accessToken));
+                accessToken.clearSensitiveFields();
+                context.setResponseBody(null);
+            }
         } catch (IOException e) {
             log.error("Cannot deserialize token response", e);
         }
@@ -115,6 +117,10 @@ public class AccessTokenToCookiePostFilter extends ZuulFilter {
 
         boolean noError() {
             return error == null;
+        }
+
+        boolean isPresent() {
+            return accessToken != null;
         }
 
         void clearSensitiveFields() {

@@ -21,20 +21,11 @@ export class DynamicFormComponent implements OnInit {
   ngOnInit(): void {
 
     this.route.params.subscribe(params => {
+
       console.log(params);
       console.log('dyn forms');
 
-      let source2 = this.dynamicFormService.findForMe().catch((error) => {
-        console.log("my error " + error.status);
-        if (error.status == 401) {
-          console.log("refresh access token")
-          this.loginService.refreshAccessToken().subscribe((result) => {
-            console.log("refresh result: " + result);
-
-          }, (err) => console.log(err));
-        }
-        return null;
-      }).retry(1);
+      let source2 = this.dynamicFormService.findForMe();
 
       source2.subscribe(
         value => this.form$ = value,
