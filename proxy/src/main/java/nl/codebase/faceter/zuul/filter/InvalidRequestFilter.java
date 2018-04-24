@@ -7,6 +7,9 @@ import org.springframework.cloud.netflix.zuul.util.ZuulRuntimeException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
+import static nl.codebase.faceter.zuul.ProxyConstants.PARAM_GRANT_TYPE;
+import static nl.codebase.faceter.zuul.ProxyConstants.PARAM_REFRESH_TOKEN;
+
 /**
  * Checks if a refresh token cookie is present when the grant type is refresh_token. If not, this probably means
  * someone access a protected URL without an access token. We'd like to stop this request as early as possible, hence
@@ -34,9 +37,9 @@ public class InvalidRequestFilter extends ZuulFilter {
 
     @Override
     public Object run() {
-        String grantType = RequestUtil.getParameter("grant_type");
-        if(grantType != null && grantType.equals("refresh_token")) {
-            String refreshToken = RequestUtil.getCookieValue("refresh_token");
+        String grantType = RequestUtil.getParameter(PARAM_GRANT_TYPE);
+        if(grantType != null && grantType.equals(PARAM_REFRESH_TOKEN)) {
+            String refreshToken = RequestUtil.getCookieValue(PARAM_REFRESH_TOKEN);
             if(refreshToken == null) {
                 throw new ZuulRuntimeException(new ZuulException("No refresh token found",
                         HttpStatus.UNAUTHORIZED.value(), "UNAUTHORIZED"));

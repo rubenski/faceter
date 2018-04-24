@@ -18,12 +18,17 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static nl.codebase.faceter.zuul.ProxyConstants.PARAM_GRANT_TYPE;
+import static nl.codebase.faceter.zuul.ProxyConstants.PARAM_REFRESH_TOKEN;
+
+
+/**
+ * Moves the refresh token coming from a cookie into the request body so it can be processed by
+ * Spring security
+ */
 @Slf4j
 @Component
 public class RefreshTokenToBodyPreFilter extends ZuulFilter {
-
-    private static final String REFRESH_TOKEN = "refresh_token";
-    private static final String GRANT_TYPE = "grant_type";
 
     @Override
     public String filterType() {
@@ -48,7 +53,7 @@ public class RefreshTokenToBodyPreFilter extends ZuulFilter {
         if (stream == null) {
             HttpServletRequestWrapper request = (HttpServletRequestWrapper) context.getRequest();
             HttpServletRequest request1 = request.getRequest();
-            String grantType = request1.getParameter("grant_type");
+            String grantType = request1.getParameter(PARAM_GRANT_TYPE);
             if (request.getRequest() instanceof StandardMultipartHttpServletRequest) {
                 return Optional.of((StandardMultipartHttpServletRequest) request.getRequest());
             }
@@ -62,10 +67,10 @@ public class RefreshTokenToBodyPreFilter extends ZuulFilter {
         RequestContext context = RequestContext.getCurrentContext();
         HttpServletRequestWrapper wrapperRequest = (HttpServletRequestWrapper) context.getRequest();
         HttpServletRequest request = wrapperRequest.getRequest();
-        String grantType = request.getParameter("grant_type");
+        String grantType = request.getParameter(PARAM_GRANT_TYPE);
 
         // If this is a token refresh attempt we need to check for a cookie containing the refresh token
-        if("refresh_token".equals(grantType)) {
+        if(PARAM_REFRESH_TOKEN.equals(grantType)) {
             // get the refresh token from cookie here and set it in the body
 
             Cookie[] cookies = context.getRequest().getCookies();
@@ -74,7 +79,7 @@ public class RefreshTokenToBodyPreFilter extends ZuulFilter {
                 return null;
             }
 
-            Optional<Cookie> refreshTokenCookieOptional = Arrays.stream(cookies).filter(cookie -> "refresh_token".equals(cookie.getName())).findFirst();
+            Optional<Cookie> refreshTokenCookieOptional = Arrays.stream(cookies).filter(cookie -> PARAM_REFRESH_TOKEN.equals(cookie.getName())).findFirst();
 
             if(refreshTokenCookieOptional.isPresent()) {
                 Cookie cookie = refreshTokenCookieOptional.get();

@@ -18,6 +18,9 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Base64;
 
+import static nl.codebase.faceter.zuul.ProxyConstants.PARAM_ACCESS_TOKEN;
+import static nl.codebase.faceter.zuul.ProxyConstants.PARAM_REFRESH_TOKEN;
+
 @Slf4j
 @Component
 public class AccessTokenToCookiePostFilter extends ZuulFilter {
@@ -64,7 +67,7 @@ public class AccessTokenToCookiePostFilter extends ZuulFilter {
     }
 
     private Cookie createCookieFromRefreshTokenInResponse(AccessToken accessToken) throws IOException {
-        Cookie refreshTokenCookie = new Cookie("refresh_token", accessToken.getRefreshToken());
+        Cookie refreshTokenCookie = new Cookie(PARAM_REFRESH_TOKEN, accessToken.getRefreshToken());
         refreshTokenCookie.setPath("/");
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setMaxAge(getExpirationSecondsFromToken(accessToken.getRefreshToken()));
@@ -72,7 +75,7 @@ public class AccessTokenToCookiePostFilter extends ZuulFilter {
     }
 
     private Cookie createCookieFromAccessTokenInResponse(AccessToken accessToken) throws IOException {
-        Cookie accessTokenCookie = new Cookie("access_token", accessToken.getAccessToken());
+        Cookie accessTokenCookie = new Cookie(PARAM_ACCESS_TOKEN, accessToken.getAccessToken());
         accessTokenCookie.setPath("/");
         accessTokenCookie.setHttpOnly(true);
         accessTokenCookie.setMaxAge(getExpirationSecondsFromToken(accessToken.getAccessToken()));
