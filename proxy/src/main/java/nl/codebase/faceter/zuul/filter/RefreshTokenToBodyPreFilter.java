@@ -2,9 +2,12 @@ package nl.codebase.faceter.zuul.filter;
 
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
+import com.netflix.zuul.exception.ZuulException;
 import com.netflix.zuul.http.HttpServletRequestWrapper;
 import com.netflix.zuul.http.ServletInputStreamWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.netflix.zuul.util.ZuulRuntimeException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.support.StandardMultipartHttpServletRequest;
@@ -16,10 +19,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import static nl.codebase.faceter.zuul.ProxyConstants.PARAM_GRANT_TYPE;
 import static nl.codebase.faceter.zuul.ProxyConstants.PARAM_REFRESH_TOKEN;
+import static nl.codebase.faceter.zuul.ProxyConstants.STATUS_UNAUTHORIZED;
 
 
 /**
@@ -81,14 +87,14 @@ public class RefreshTokenToBodyPreFilter extends ZuulFilter {
 
             Optional<Cookie> refreshTokenCookieOptional = Arrays.stream(cookies).filter(cookie -> PARAM_REFRESH_TOKEN.equals(cookie.getName())).findFirst();
 
-            if(refreshTokenCookieOptional.isPresent()) {
-                Cookie cookie = refreshTokenCookieOptional.get();
-                String refreshToken = cookie.getValue();
-
+            // Actually we already know it is present when ending up here, because the InvalidRequestFilter
+            // will stop the request short when no refresh_token is present for a refresh_token request.
+            if(!refreshTokenCookieOptional.isPresent()) {
+                throw new ZuulRuntimeException(new ZuulException("No refresh token found", HttpStatus.UNAUTHORIZED.value(), STATUS_UNAUTHORIZED));
             }
 
-            String test = "";
-
+            Cookie cookie = refreshTokenCookieOptional.get();
+            String refreshToken = cookie.getValue();
 
             try {
                 InputStream in = (InputStream) context.get("requestEntity");
@@ -98,21 +104,51 @@ public class RefreshTokenToBodyPreFilter extends ZuulFilter {
                 String body = StreamUtils.copyToString(in, Charset.forName("UTF-8"));
                 byte[] bytes = body.getBytes("UTF-8");
 
+                bytes = String.format("refresh_token=%s&grant_type=refresh_token", refreshToken).getBytes();
+
+                byte[] finalBytes = bytes;
                 context.setRequest(new HttpServletRequestWrapper(context.getRequest()) {
                     @Override
                     public ServletInputStream getInputStream() throws IOException {
-                        return new ServletInputStreamWrapper(bytes);
+                        return new ServletInputStreamWrapper(finalBytes);
                     }
 
                     @Override
                     public int getContentLength() {
-                        return bytes.length;
+                        return finalBytes.length;
                     }
 
                     @Override
                     public long getContentLengthLong() {
-                        return bytes.length;
+                        return finalBytes.length;
                     }
+
+                    @Override
+                    public String getParameter(String name) {
+
+                        if(name.equals("refresh_token")) {
+                            return "hallelujah";
+                        }
+
+                        return super.getParameter(name);
+                    }
+
+                    @Override
+                    public Map getParameterMap() {
+                        return super.getParameterMap();
+                    }
+
+                    @Override
+                    public String[] getParameterValues(String name) {
+                        return super.getParameterValues(name);
+                    }
+
+                    @Override
+                    public HashMap<String, String[]> getParameters() {
+                        return super.getParameters();
+                    }
+
+
                 });
             } catch (IOException e) {
 

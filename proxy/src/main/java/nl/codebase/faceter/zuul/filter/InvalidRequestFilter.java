@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import static nl.codebase.faceter.zuul.ProxyConstants.PARAM_GRANT_TYPE;
 import static nl.codebase.faceter.zuul.ProxyConstants.PARAM_REFRESH_TOKEN;
+import static nl.codebase.faceter.zuul.ProxyConstants.STATUS_UNAUTHORIZED;
 
 /**
  * Checks if a refresh token cookie is present when the grant type is refresh_token. If not, this probably means
@@ -42,7 +43,7 @@ public class InvalidRequestFilter extends ZuulFilter {
             String refreshToken = RequestUtil.getCookieValue(PARAM_REFRESH_TOKEN);
             if(refreshToken == null) {
                 throw new ZuulRuntimeException(new ZuulException("No refresh token found",
-                        HttpStatus.UNAUTHORIZED.value(), "UNAUTHORIZED"));
+                        HttpStatus.UNAUTHORIZED.value(), STATUS_UNAUTHORIZED));
             }
         }
 
