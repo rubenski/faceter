@@ -1,5 +1,6 @@
 package nl.codebase.iam;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +12,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * Main config for IAM. Contains beans that cause circular dependencies when included in other configs.
@@ -44,25 +47,5 @@ public class IAMConfig {
         converter.setSigningKey(signingKey);
         return converter;
     }
-
-    /**
-     * Returns a csrf token in every response
-     * @return
-     */
-   /* @Bean
-    public FilterRegistrationBean csrfFilter() {
-        FilterRegistrationBean registrationBean = new FilterRegistrationBean();;
-        registrationBean.setFilter(new CsrfTokenResponseFilter());
-        registrationBean.setOrder(1);
-        return registrationBean;
-    }*/
-
-    /*@Bean
-    public FilterRegistrationBean refreshTokenToBodyFilter() {
-        FilterRegistrationBean registrationBean = new FilterRegistrationBean();;
-        registrationBean.setFilter(new JwtRefreshTokenToBodyRequestFilter());
-        registrationBean.setOrder(-1000000000);
-        return registrationBean;
-    }*/
 
 }

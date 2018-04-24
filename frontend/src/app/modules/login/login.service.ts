@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {JwtHelper} from 'angular2-jwt';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 
 import {TOKEN_AUTH_PASSWORD, TOKEN_AUTH_USERNAME, TOKEN_NAME} from '../../app.constants';
 import {Observable} from "rxjs/Observable";
@@ -42,9 +42,9 @@ export class LoginService {
   refreshAccessToken() : Observable<{}> {
 
     console.log("refreshing!");
-
-    const body = `grant_type=refresh_token`;
-    const httpOptions = {
+    let params = new HttpParams();
+    const body = params.set('grant_type', 'refresh_token').set('bla', 'bla');
+    const options = {
       headers: new HttpHeaders({
         'Content-Type': 'application/x-www-form-urlencoded',
         'Authorization': 'Basic ' + btoa(TOKEN_AUTH_USERNAME + ':' + TOKEN_AUTH_PASSWORD),
@@ -52,7 +52,7 @@ export class LoginService {
       })
     };
 
-    return this.http.post(LoginService.AUTH_TOKEN, body, httpOptions);
+    return this.http.post(LoginService.AUTH_TOKEN, body, options);
   }
 
   processToken(accessToken: string) {

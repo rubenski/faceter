@@ -3,14 +3,19 @@ package nl.codebase.faceter.zuul.filter;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.http.HttpServletRequestWrapper;
+import com.netflix.zuul.http.ServletInputStreamWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.support.StandardMultipartHttpServletRequest;
 
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
+import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.Optional;
 
 @Slf4j
@@ -32,29 +37,18 @@ public class RefreshTokenToBodyPreFilter extends ZuulFilter {
 
     @Override
     public boolean shouldFilter() {
-
-        Optional<StandardMultipartHttpServletRequest> multiPartRequestOptional = getMultiPartRequest();
-        if(multiPartRequestOptional.isPresent()) {
-            MultipartHttpServletRequest multipartRequest = multiPartRequestOptional.get();
-            Map<String, String[]> parameterMap = multipartRequest.getParameterMap();
-            if(parameterMap.containsKey(GRANT_TYPE)) {
-                String grantTypeValue = parameterMap.get(GRANT_TYPE)[0];
-                if(grantTypeValue != null && grantTypeValue.equals(REFRESH_TOKEN)) {
-                    return true;
-                }
-            }
-
-        }
-
-        return false;
-
+        HttpServletRequest request = RequestContext.getCurrentContext().getRequest();
+        String requestURI = request.getRequestURI();
+        return requestURI.contains("token");
     }
 
-    private Optional<StandardMultipartHttpServletRequest> getMultiPartRequest() {
+    private Optional<StandardMultipartHttpServletRequest> getRequest() {
         RequestContext context = RequestContext.getCurrentContext();
         InputStream stream = (InputStream) context.get("requestEntity");
         if (stream == null) {
             HttpServletRequestWrapper request = (HttpServletRequestWrapper) context.getRequest();
+            HttpServletRequest request1 = request.getRequest();
+            String grantType = request1.getParameter("grant_type");
             if (request.getRequest() instanceof StandardMultipartHttpServletRequest) {
                 return Optional.of((StandardMultipartHttpServletRequest) request.getRequest());
             }
@@ -64,30 +58,61 @@ public class RefreshTokenToBodyPreFilter extends ZuulFilter {
 
     @Override
     public Object run() {
-        Optional<StandardMultipartHttpServletRequest> multiPartRequestOptional = getMultiPartRequest();
+
         RequestContext context = RequestContext.getCurrentContext();
-        if(multiPartRequestOptional.isPresent()) {
+        HttpServletRequestWrapper wrapperRequest = (HttpServletRequestWrapper) context.getRequest();
+        HttpServletRequest request = wrapperRequest.getRequest();
+        String grantType = request.getParameter("grant_type");
+
+        // If this is a token refresh attempt we need to check for a cookie containing the refresh token
+        if("refresh_token".equals(grantType)) {
             // get the refresh token from cookie here and set it in the body
 
             Cookie[] cookies = context.getRequest().getCookies();
-            // byte[] bytes = body.getBytes("UTF-8");
 
-            /*context.setRequest(new HttpServletRequestWrapper(context.getRequest()) {
-                @Override
-                public ServletInputStream getInputStream() throws IOException {
-                    return new ServletInputStreamWrapper(bytes);
-                }
+            if(cookies == null) {
+                return null;
+            }
 
-                @Override
-                public int getContentLength() {
-                    return bytes.length;
-                }
+            Optional<Cookie> refreshTokenCookieOptional = Arrays.stream(cookies).filter(cookie -> "refresh_token".equals(cookie.getName())).findFirst();
 
-                @Override
-                public long getContentLengthLong() {
-                    return bytes.length;
+            if(refreshTokenCookieOptional.isPresent()) {
+                Cookie cookie = refreshTokenCookieOptional.get();
+                String refreshToken = cookie.getValue();
+
+            }
+
+            String test = "";
+
+
+            try {
+                InputStream in = (InputStream) context.get("requestEntity");
+                if (in == null) {
+                    in = context.getRequest().getInputStream();
                 }
-            });*/
+                String body = StreamUtils.copyToString(in, Charset.forName("UTF-8"));
+                byte[] bytes = body.getBytes("UTF-8");
+
+                context.setRequest(new HttpServletRequestWrapper(context.getRequest()) {
+                    @Override
+                    public ServletInputStream getInputStream() throws IOException {
+                        return new ServletInputStreamWrapper(bytes);
+                    }
+
+                    @Override
+                    public int getContentLength() {
+                        return bytes.length;
+                    }
+
+                    @Override
+                    public long getContentLengthLong() {
+                        return bytes.length;
+                    }
+                });
+            } catch (IOException e) {
+
+            }
+
         }
         return null;
     }
