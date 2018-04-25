@@ -31,3 +31,5 @@ package-lock.json
 
 ## angular ##
 *.map
+
+*.log
