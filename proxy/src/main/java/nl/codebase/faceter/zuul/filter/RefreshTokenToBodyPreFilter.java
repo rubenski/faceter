@@ -58,8 +58,6 @@ public class RefreshTokenToBodyPreFilter extends ZuulFilter {
         InputStream stream = (InputStream) context.get("requestEntity");
         if (stream == null) {
             HttpServletRequestWrapper request = (HttpServletRequestWrapper) context.getRequest();
-            HttpServletRequest request1 = request.getRequest();
-            String grantType = request1.getParameter(PARAM_GRANT_TYPE);
             if (request.getRequest() instanceof StandardMultipartHttpServletRequest) {
                 return Optional.of((StandardMultipartHttpServletRequest) request.getRequest());
             }

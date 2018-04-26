@@ -21,6 +21,11 @@ import java.util.Base64;
 import static nl.codebase.faceter.zuul.ProxyConstants.PARAM_ACCESS_TOKEN;
 import static nl.codebase.faceter.zuul.ProxyConstants.PARAM_REFRESH_TOKEN;
 
+/**
+ * Moves the access token created by Spring security after successful authentication from the response body into
+ * a HTTP-only time-limited cookie. We prefer having tokens in HTTP-only cookies, because storing a cookie in browser
+ * storage will make it vulnerable to cross site scripting attacks.
+ */
 @Slf4j
 @Component
 public class AccessTokenToCookiePostFilter extends ZuulFilter {

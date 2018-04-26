@@ -1,6 +1,5 @@
 package nl.codebase.iam;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,8 +11,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
 
 /**
  * Main config for IAM. Contains beans that cause circular dependencies when included in other configs.
@@ -23,7 +20,6 @@ public class IAMConfig {
 
     @Value("${security.signing-key}")
     private String signingKey;
-
 
     @Bean
     public UserDetailsService userDetailsService() {
@@ -47,5 +43,4 @@ public class IAMConfig {
         converter.setSigningKey(signingKey);
         return converter;
     }
-
 }
