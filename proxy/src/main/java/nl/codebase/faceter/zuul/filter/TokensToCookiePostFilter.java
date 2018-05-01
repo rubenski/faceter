@@ -29,7 +29,7 @@ import static nl.codebase.faceter.common.FaceterConstants.PARAM_REFRESH_TOKEN;
  */
 @Slf4j
 @Component
-public class AccessTokenToCookiePostFilter extends ZuulFilter {
+public class TokensToCookiePostFilter extends ZuulFilter {
 
     private ObjectMapper mapper = new ObjectMapper();
 
