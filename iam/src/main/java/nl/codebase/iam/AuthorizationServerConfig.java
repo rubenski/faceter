@@ -107,7 +107,4 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         defaultTokenServices.setSupportRefreshToken(true);
         return defaultTokenServices;
     }
-
-
-
 }

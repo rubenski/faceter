@@ -13,8 +13,12 @@ public class UserDaoImpl extends JdbcDaoSupport implements UserDao {
 
     private static final String SQL_SELECT_BY_ID = "SELECT * FROM f_user WHERE email = ?";
 
+    private final DataSource dataSource;
+
     @Autowired
-    private DataSource dataSource;
+    public UserDaoImpl(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
     @PostConstruct
     private void initialize() {

@@ -18,8 +18,9 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Base64;
 
-import static nl.codebase.faceter.zuul.ProxyConstants.PARAM_ACCESS_TOKEN;
-import static nl.codebase.faceter.zuul.ProxyConstants.PARAM_REFRESH_TOKEN;
+import static nl.codebase.faceter.common.FaceterConstants.PARAM_ACCESS_TOKEN;
+import static nl.codebase.faceter.common.FaceterConstants.PARAM_REFRESH_TOKEN;
+
 
 /**
  * Moves the access token created by Spring security after successful authentication from the response body into

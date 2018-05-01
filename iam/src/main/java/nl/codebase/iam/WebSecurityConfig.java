@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -30,11 +31,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${security.jwt.client-secret}")
     private String secret;
 
+    @Value("${logout.success.url}")
+    private String logoutSuccessUrl;
+
     private final UserDetailsService userDetailsService;
+    private LogoutHandler logoutHandler;
 
     @Autowired
-    public WebSecurityConfig(UserDetailsService userDetailsService) {
+    public WebSecurityConfig(UserDetailsService userDetailsService, LogoutHandler logoutHandler) {
         this.userDetailsService = userDetailsService;
+        this.logoutHandler = logoutHandler;
     }
 
     @Override
@@ -48,7 +54,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .csrf()
-                .disable();
+                .disable()
+                .logout()
+                .addLogoutHandler(logoutHandler)
+                .logoutUrl("/logout")
+                .logoutSuccessUrl(logoutSuccessUrl);
     }
-
 }
