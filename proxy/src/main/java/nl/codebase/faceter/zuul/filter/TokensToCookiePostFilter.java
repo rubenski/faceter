@@ -23,9 +23,12 @@ import static nl.codebase.faceter.common.FaceterConstants.PARAM_REFRESH_TOKEN;
 
 
 /**
- * Moves the access token created by Spring security after successful authentication from the response body into
- * a HTTP-only time-limited cookie. We prefer having tokens in HTTP-only cookies, because storing a cookie in browser
- * storage will make it vulnerable to cross site scripting attacks.
+ * Moves the refresh and access tokens created by Spring security after successful authentication from the response
+ * body into HTTP-only time-limited cookies. We prefer having tokens in HTTP-only cookies, because storing tokens
+ * in browser storage will make them vulnerable to cross site scripting attacks.
+ *
+ * We provide a cross site request forgery (CSRF) token to protect against abuse of the created cookies. See
+ * CsrfTokenResponseFilter.
  */
 @Slf4j
 @Component
