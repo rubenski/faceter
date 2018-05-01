@@ -33,6 +33,13 @@ public class User implements UserDetails {
 
     private Collection<SimpleGrantedAuthority> grantedAuthorities;
 
+    public User(String email) {
+        this.email = email;
+    }
+
+    public User() {
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         try {

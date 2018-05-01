@@ -2,12 +2,11 @@ package nl.codebase.iam.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
-import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
-import java.util.Collection;
 
 @Repository
 public class UserDaoImpl extends JdbcDaoSupport implements UserDao {
@@ -23,8 +22,17 @@ public class UserDaoImpl extends JdbcDaoSupport implements UserDao {
     }
 
     @Override
-    public User findUserById(String uuid) {
-        return getJdbcTemplate().queryForObject(SQL_SELECT_BY_ID, new Object[]{uuid}, (rs, i) -> {
+    public User findUserByEmail(String email) {
+        return getJdbcTemplate().query(SQL_SELECT_BY_ID, preparedStatement -> {
+            preparedStatement.setString(1, email);
+        }, rs -> {
+
+            if(!rs.next()) {
+                // UsernameNotFoundException will trigger Spring to return a 400 to the client, which
+                // is the same response as for filling out bad credentials, so this is what we need.
+                throw new UsernameNotFoundException("User not found");
+            }
+
             User user = new User();
             user.setUuid(rs.getString("uuid"));
             user.setFirstName(rs.getString("first_name"));
@@ -35,8 +43,6 @@ public class UserDaoImpl extends JdbcDaoSupport implements UserDao {
             user.setEnabled(rs.getBoolean("enabled"));
             user.setAccountExpired(rs.getBoolean("account_expired"));
             user.setPassword(rs.getString("pw"));
-
-            Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
             return user;
         });
     }
