@@ -8,6 +8,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static nl.codebase.faceter.common.FaceterConstants.PARAM_ACCESS_TOKEN;
+import static nl.codebase.faceter.common.FaceterConstants.PARAM_REFRESH_TOKEN;
+
 public class RequestUtil {
 
     public static HttpServletRequest getRequest() {
@@ -27,5 +30,21 @@ public class RequestUtil {
         }
         Optional<Cookie> optionalCookie = Arrays.stream(cookies).filter(c -> c.getName().equals(cookie)).findFirst();
         return optionalCookie.isPresent() ? optionalCookie.get().getValue() : null;
+    }
+
+    public static String getAccessToken() {
+        return getCookieValue(PARAM_ACCESS_TOKEN);
+    }
+
+    public static String getRefreshToken() {
+        return getCookieValue(PARAM_REFRESH_TOKEN);
+    }
+
+    public static boolean hasAccessToken() {
+        return getCookieValue(PARAM_ACCESS_TOKEN) != null;
+    }
+
+    public static boolean hasRefreshToken() {
+        return getCookieValue(PARAM_REFRESH_TOKEN) != null;
     }
 }
