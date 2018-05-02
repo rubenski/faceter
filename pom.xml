@@ -21,6 +21,7 @@
         <module>forms-api</module>
         <module>common</module>
         <module>proxy</module>
+        <module>token-api</module>
     </modules>
 
 </project>
