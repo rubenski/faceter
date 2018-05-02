@@ -2,5 +2,5 @@ package nl.codebase.iam.logout;
 
 public interface LogoutDao {
 
-    void insertLoggedOutToken(String token);
+    void insertLoggedOutToken(String... token);
 }

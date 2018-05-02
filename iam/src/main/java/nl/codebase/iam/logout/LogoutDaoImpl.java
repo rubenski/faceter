@@ -7,7 +7,8 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.sql.Timestamp;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 @Repository
 public class LogoutDaoImpl extends JdbcDaoSupport implements LogoutDao {
@@ -27,10 +28,12 @@ public class LogoutDaoImpl extends JdbcDaoSupport implements LogoutDao {
     }
 
     @Override
-    public void insertLoggedOutToken(String token) {
-        getJdbcTemplate().update(SQL_INSERT_TOKEN, preparedStatement -> {
-            preparedStatement.setString(0, token);
-            preparedStatement.setTimestamp(1, new Timestamp(LocalDate.now().toEpochDay()));
-        });
+    public void insertLoggedOutToken(String... tokens) {
+        for (String token : tokens) {
+            getJdbcTemplate().update(SQL_INSERT_TOKEN, preparedStatement -> {
+                preparedStatement.setString(1, token);
+                preparedStatement.setTimestamp(2, new Timestamp(LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli()));
+            });
+        }
     }
 }

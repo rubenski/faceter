@@ -15,14 +15,9 @@ public class LogoutService {
     }
 
     @Transactional
-    public void logout(String accessToken, String refreshToken) {
-
-        if(accessToken != null) {
-            logoutDao.insertLoggedOutToken(accessToken);
-        }
-
-        if(refreshToken != null) {
-            logoutDao.insertLoggedOutToken(refreshToken);
+    public void logout(String... token) {
+        if(token != null) {
+            logoutDao.insertLoggedOutToken(token);
         }
     }
 }

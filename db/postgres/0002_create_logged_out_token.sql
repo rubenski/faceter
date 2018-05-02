@@ -1,5 +1,5 @@
 create table f_logged_out_token (
-  token VARCHAR(100) PRIMARY KEY,
+  token VARCHAR(500) PRIMARY KEY,
   logout_time TIMESTAMP
 );
 

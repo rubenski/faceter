@@ -10,6 +10,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.util.Arrays;
+
 import static nl.codebase.faceter.common.FaceterConstants.PARAM_ACCESS_TOKEN;
 import static nl.codebase.faceter.common.FaceterConstants.PARAM_REFRESH_TOKEN;
 
@@ -18,12 +20,12 @@ import static nl.codebase.faceter.common.FaceterConstants.PARAM_REFRESH_TOKEN;
  */
 @Component
 @Slf4j
-public class IAMLogoutSuccessHandler implements LogoutHandler {
+public class IAMLogoutHandler implements LogoutHandler {
 
     private LogoutService logoutService;
 
     @Autowired
-    public IAMLogoutSuccessHandler(LogoutService logoutService) {
+    public IAMLogoutHandler(LogoutService logoutService) {
         this.logoutService = logoutService;
     }
 
@@ -33,8 +35,7 @@ public class IAMLogoutSuccessHandler implements LogoutHandler {
         response.addCookie(createImmediatelyExpiringCookie(PARAM_ACCESS_TOKEN));
 
         Cookie[] cookies = request.getCookies();
-        String test = "";
-        // logoutService.logout();
+        Arrays.stream(cookies).forEach(c -> logoutService.logout(c.getValue()));
     }
 
     private Cookie createImmediatelyExpiringCookie(String name) {
