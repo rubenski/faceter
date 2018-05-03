@@ -1,6 +1,7 @@
 package nl.codebase.iam.logout;
 
 import lombok.extern.slf4j.Slf4j;
+import nl.codebase.faceter.common.token.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
@@ -22,11 +23,11 @@ import static nl.codebase.faceter.common.FaceterConstants.PARAM_REFRESH_TOKEN;
 @Slf4j
 public class IAMLogoutHandler implements LogoutHandler {
 
-    private LogoutService logoutService;
+    private TokenService tokenService;
 
     @Autowired
-    public IAMLogoutHandler(LogoutService logoutService) {
-        this.logoutService = logoutService;
+    public IAMLogoutHandler(TokenService tokenService) {
+        this.tokenService = tokenService;
     }
 
     @Override
@@ -35,7 +36,9 @@ public class IAMLogoutHandler implements LogoutHandler {
         response.addCookie(createImmediatelyExpiringCookie(PARAM_ACCESS_TOKEN));
 
         Cookie[] cookies = request.getCookies();
-        Arrays.stream(cookies).forEach(c -> logoutService.logout(c.getValue()));
+        Arrays.stream(cookies)
+                .filter(c -> PARAM_ACCESS_TOKEN.equals(c.getName()) || PARAM_REFRESH_TOKEN.equals(c.getName()))
+                .forEach(c -> tokenService.logout(c.getName(), c.getValue()));
     }
 
     private Cookie createImmediatelyExpiringCookie(String name) {
