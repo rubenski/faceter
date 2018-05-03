@@ -40,8 +40,13 @@ public class TokenService {
 
         JwtClaims jwtClaims = getJwtClaims(token);
         int exp = jwtClaims.getExp();
-        tokenDao.insertLoggedOutToken(token, exp);
+        tokenDao.insert(token, exp);
 
+    }
+
+    public boolean isLoggedOutToken(String token) {
+        String existingToken = tokenDao.read(token);
+        return existingToken != null;
     }
 
     private JwtClaims getJwtClaims(String token) {

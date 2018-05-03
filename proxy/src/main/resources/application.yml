@@ -19,3 +19,15 @@ server:
 ribbon:
   eureka:
     enabled: false
+
+
+# TODO: These properties should not be here. Fix!
+spring:
+  datasource:
+    platform: postgresql
+    url: jdbc:postgresql://localhost:5432/faceter
+    username: faceter
+    password: Smeerkaas1!
+
+security:
+  signing-key: MaYzkSjmkzPC57L
